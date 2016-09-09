@@ -1,0 +1,375 @@
+
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ *
+ * @author chandrimaghosh/Nishant shetty
+ */
+public class VendorHomeJFrame extends javax.swing.JFrame {
+
+    /**
+     * Creates new form VendorHomeJFrame
+     */
+      Vendor v=new Vendor();
+      String vendorname;
+    
+    public VendorHomeJFrame(String vname ) {
+        
+        initComponents();
+         this.setDefaultCloseOperation(this.HIDE_ON_CLOSE);
+        vendorname=vname;
+         avtiveOrdersJTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        avtiveOrdersJTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null,null,null,null,null,null,null,null},
+                
+            },
+            new String [] {
+              "Oid","Orderedby", "Price","ProductId","Cancelled?",
+                "Dispatched","Doctor","Patient","OrderDate","expdate"}
+        ));
+        
+       Order o =new Order();
+       ArrayList<Order> active_orders=new ArrayList<>();
+    
+      try{
+        PreparedStatement doc_Details =login.con.prepareStatement
+            
+        ("select vname,vid,vemail from Vendor where vuname=?;");
+            	  doc_Details.setString(1, vname);
+            	  ResultSet rs = doc_Details.executeQuery();
+            	   while(rs.next()){
+                   v.setVendor_name(rs.getString(1));
+                       v.setVendor_id(rs.getInt(2));
+                       v.setVendor_email(rs.getString(3));
+            		   
+                      } 
+                   
+                   vendorId.setText(Integer.toString(v.getVendor_id()));
+                   vendorName.setText(v.getVendor_name());
+                   vendorEmail.setText(v.getVendor_email());
+        
+            PreparedStatement standing_orders =login.con.prepareStatement
+                ("select  Productid , Orderedby,Doctorid,Patientid,OrderPrice,"
+                 + "Oid , OrderDate,OrderCompExp from OrderTable where Vendorid=? and Dispatched=? and Cancelled=?  ");
+                    
+            standing_orders.setInt(1, v.getVendor_id());
+                    standing_orders.setBoolean(2, false);
+                    standing_orders.setBoolean(3, false);
+                    ResultSet r = standing_orders.executeQuery();
+ 
+                  while(r.next()){
+                      
+                       Order order=new Order();
+                       order.setProductIdinOrder(r.getInt(1));
+                       order.setOrderedBy(r.getString(2));
+                       order.setDoctorIdinOrder(r.getInt(3));
+                       order.setPatientIdinOrder(r.getInt(4));
+                       order.setOrderPrice(r.getFloat(5));
+                       order.setDispatched(false);
+                       order.setCancelled(false);
+                       order.setoId(r.getInt(6));
+                       order.setOrderDate(r.getDate(7));
+                       order.setOrderCompExp(r.getDate(8));
+                          active_orders.add(order);
+           		    }
+                 Iterator<Order> ao = active_orders.iterator();
+                
+  
+                   int rowCount=avtiveOrdersJTable.getRowCount();
+       
+                   DefaultTableModel dtm= (DefaultTableModel)avtiveOrdersJTable.getModel();
+                        for(int i=rowCount-1;i>0;i--){
+                        dtm.removeRow(i);
+                            }
+       // "Oid","Orderedby", "Price","ProductId","Cancelled?","Dispatched","Doctor","Patient"}
+        while(ao.hasNext()) {
+           Order active=new Order();
+           active=ao.next();
+          
+            Object row[] = new Object[10];
+         row[0]=active.getoId();
+         row[1]=active.getOrderedBy();
+         row[2]=active.getOrderPrice();
+         row[3]=active.getProductIdinOrder();
+         row[4]=active.isCancelled();
+         row[5]=active.isDispatched();
+         row[6]=active.getDoctorIdinOrder();
+         row[7]=active.getPatientIdinOrder();
+         row[8]=active.getOrderDate();
+         row[9]=active.getOrderCompExp();
+         
+         dtm.addRow(row);
+        }
+               }
+          catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }  
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel1 = new javax.swing.JLabel();
+        vendorId = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        vendorName = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        vendorEmail = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        avtiveOrdersJTable = new javax.swing.JTable();
+        addProduct = new javax.swing.JButton();
+        delaydelivery = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        stockUpdae = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jLabel1.setText("Id:");
+
+        vendorId.setText("jLabel2");
+
+        jLabel3.setText("Name:");
+
+        vendorName.setText("jLabel4");
+
+        jLabel5.setText("Email:");
+
+        vendorEmail.setText("jLabel6");
+
+        avtiveOrdersJTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(avtiveOrdersJTable);
+
+        addProduct.setText("Add Product");
+        addProduct.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addProductActionPerformed(evt);
+            }
+        });
+
+        delaydelivery.setText("Delay Delivery");
+        delaydelivery.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                delaydeliveryActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Dispatch order");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Active Orders");
+
+        stockUpdae.setText("Stock Update");
+        stockUpdae.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stockUpdaeActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Refresh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 694, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel5))
+                                .addGap(42, 42, 42)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(vendorId)
+                                    .addComponent(vendorName)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(vendorEmail)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jButton1))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(delaydelivery)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(addProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(stockUpdae))))
+                        .addGap(35, 35, 35)))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(vendorId))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(vendorName))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(vendorEmail))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addGap(12, 12, 12)))
+                .addComponent(jLabel2)
+                .addGap(4, 4, 4)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(delaydelivery)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addProduct)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(stockUpdae)
+                .addGap(19, 19, 19))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+     int rowSelected = avtiveOrdersJTable.getSelectedRow();
+             if(rowSelected > 0){
+            
+             int id=(Integer) avtiveOrdersJTable.getModel().getValueAt(rowSelected, 0);
+    try {
+        PreparedStatement dispatch_order =login.con.prepareStatement
+                 (" Update  OrderTable set Dispatched=? where Oid=? ");
+     
+            dispatch_order.setBoolean(1,true);
+            dispatch_order.setInt(2,id);
+            
+            dispatch_order.execute();
+        JOptionPane.showMessageDialog(null, "order oid"+id+"is now dispatched");
+      SwingUtilities.updateComponentTreeUI(this);
+    } catch (SQLException ex) {
+        Logger.getLogger(VendorHomeJFrame.class.getName()).log(Level.SEVERE, null, ex);
+    }} else
+             {JOptionPane.showMessageDialog(null,"Please select a an order");}
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void addProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProductActionPerformed
+       AddProductJframe addpage=new AddProductJframe(v.getVendor_id());
+       addpage.setVisible(true);
+       
+       
+
+    }//GEN-LAST:event_addProductActionPerformed
+
+    private void delaydeliveryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delaydeliveryActionPerformed
+        int rowSelected = avtiveOrdersJTable.getSelectedRow();
+             if(rowSelected > 0){
+              Date actual_expected = (Date) avtiveOrdersJTable.getModel().getValueAt(rowSelected, 9);
+             int id=(Integer) avtiveOrdersJTable.getModel().getValueAt(rowSelected, 0);
+    try {
+        PreparedStatement extend_date =login.con.prepareStatement
+                        (" Update  OrderTable set OrderCompExp=? where Oid=? ");
+     
+        java.sql.Date sqlDateExpectedextended = new java.sql.Date (actual_expected.getTime()+(1000 * 60 * 60 * 48));
+            extend_date.setDate(1,sqlDateExpectedextended);
+            extend_date.setInt(2,id);
+            extend_date.execute();
+        JOptionPane.showMessageDialog(null, "Actual expected date was"+actual_expected+"for oid"+id+"is now"+sqlDateExpectedextended);
+      
+    } catch (SQLException ex) {
+        Logger.getLogger(VendorHomeJFrame.class.getName()).log(Level.SEVERE, null, ex);
+    }
+           
+              
+              
+             
+             }
+             else
+             {JOptionPane.showMessageDialog(null,"Please select a an order");}
+    }//GEN-LAST:event_delaydeliveryActionPerformed
+
+    private void stockUpdaeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stockUpdaeActionPerformed
+        StockUpdateJFrame sj=new StockUpdateJFrame(v.getVendor_id());
+        sj.setVisible(true);
+    }//GEN-LAST:event_stockUpdaeActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        this.setVisible(false);
+        VendorHomeJFrame vj=new VendorHomeJFrame(vendorname);
+        vj.setVisible(true);
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    
+    
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addProduct;
+    private javax.swing.JTable avtiveOrdersJTable;
+    private javax.swing.JButton delaydelivery;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton stockUpdae;
+    private javax.swing.JLabel vendorEmail;
+    private javax.swing.JLabel vendorId;
+    private javax.swing.JLabel vendorName;
+    // End of variables declaration//GEN-END:variables
+}
